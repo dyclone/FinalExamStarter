@@ -27,10 +27,9 @@ public class Student_Test {
 	}
 
 	@Test
-	public void test() {
-		//FinalExam - Add some meaningful junit tests.
-		assertTrue(1==1);
-		StudentDAL.getStudents();
+	public void test() {	
+		double testrate = RateDAL.getRate(700);
+		System.out.println(testrate);
+		assertTrue(testrate == 4);
 	}
-
 }

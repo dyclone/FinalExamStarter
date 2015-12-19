@@ -15,14 +15,35 @@ import util.HibernateUtil;
 
 public class RateDAL {
 
+	public static double getRate(int creditScore) {
+		Session session = HibernateUtil.getSessionFactory().openSession();
+		Transaction tx = null;
+		RateDomainModel rateGet = null;
+		try {
+			tx = session.beginTransaction();
+			String search = "from RateDomainModel where mincreditscore <=" + creditScore;
+			Query query = session.createQuery(search);
+			List<?> list = query.list();
 
-	public static double getRate(int GivenCreditScore) {
-		//FinalExam - please implement		
-		// Figure out which row makes sense- return back the 
-		// right interest rate from the table based on the given credit score
-		
-		//FinalExam - obviously change the return value
-		return 0;
+			rateGet = (RateDomainModel) list.get(0);
+
+			for (Iterator iterator = list.iterator(); iterator.hasNext();) {
+				RateDomainModel rate = (RateDomainModel) iterator.next();
+				if (rate.getInterestRate() <= rateGet.getInterestRate()) {
+					rateGet = rate;
+				}
+			}
+			tx.commit();
+		}
+
+		catch (HibernateException e) {
+			if (tx != null)
+				tx.rollback();
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+		return rateGet.getInterestRate();
 	}
 
 }
